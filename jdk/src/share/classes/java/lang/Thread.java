@@ -1942,8 +1942,8 @@ class Thread implements Runnable {
         checkAccess();
         uncaughtExceptionHandler = eh;
     }
-
     /**
+     * 由JVM向线程发送执行的异常信息。由线程去处理,或通过线程自定义异常处理器进行回调处理、或通过线程默认异常处理器进行回调处理、或输出到控制台
      * Dispatch an uncaught exception to the handler. This method is
      * intended to be called only by the JVM.
      */

@@ -858,16 +858,16 @@ public abstract class AbstractQueuedSynchronizer
         boolean failed = true;
         try {
             boolean interrupted = false;
-            for (;;) {
+            for (;;) { // 此处循环为等待的线程node节点获取锁的地方。head节点永远都是一个虚拟节点,他永远不会被唤醒
                 final Node p = node.predecessor();
                 if (p == head && tryAcquire(arg)) {
-                    setHead(node);
+                    setHead(node); // 设置node为head,同时将thread值为空
                     p.next = null; // help GC
                     failed = false;
                     return interrupted;
-                }
+                } // shouldParkAfterFailedAcquire 设置前驱节点为SIGNAL,表示p节点后还有等待的需要唤醒的节点
                 if (shouldParkAfterFailedAcquire(p, node) &&
-                    parkAndCheckInterrupt())
+                    parkAndCheckInterrupt()) // 阻塞当前线程.当前线程如果被唤醒了,发现当前线程被中断了,则当前线程在获取锁的时候,就会返回true
                     interrupted = true;
             }
         } finally {
@@ -1514,10 +1514,10 @@ public abstract class AbstractQueuedSynchronizer
         // before tail and on head.next being accurate if the current
         // thread is first in queue.
         Node t = tail; // Read fields in reverse initialization order
-        Node h = head;
-        Node s;
-        return h != t &&
-            ((s = h.next) == null || s.thread != Thread.currentThread());
+        Node h = head; // h == t 表示没有线程持有当前的锁
+        Node s; // h != t 表示还有等待的线程。如果没有等待的线程,t/h 要么是null,要么是相同的对象引用。
+        return h != t && // h != t && h.next == null:在addWaiter时候,会先CAS修改tail引用,然后再设置前驱节点的后继引用,所以此中间可能为空。
+            ((s = h.next) == null || s.thread != Thread.currentThread()); // h != t && s.thread != Thread.currentThread():还有等待的线程,但是非当前线程。
     }
 
 

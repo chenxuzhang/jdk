@@ -152,7 +152,7 @@ public class Vector<E>
      * Constructs an empty vector so that its internal data array
      * has size {@code 10} and its standard capacity increment is
      * zero.
-     */
+     */ // 无参构造就制定了数组长度
     public Vector() {
         this(10);
     }
@@ -257,7 +257,7 @@ public class Vector<E>
     private void grow(int minCapacity) {
         // overflow-conscious code
         int oldCapacity = elementData.length;
-        int newCapacity = oldCapacity + ((capacityIncrement > 0) ?
+        int newCapacity = oldCapacity + ((capacityIncrement > 0) ? // 判断容量增量。未指定容量增量,则扩容为2倍。指定容量增量,则扩容为(原有容量 + 增量)
                                          capacityIncrement : oldCapacity);
         if (newCapacity - minCapacity < 0)
             newCapacity = minCapacity;

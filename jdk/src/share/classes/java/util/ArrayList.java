@@ -107,9 +107,9 @@ public class ArrayList<E> extends AbstractList<E>
         implements List<E>, RandomAccess, Cloneable, java.io.Serializable
 {
     private static final long serialVersionUID = 8683452581122892189L;
-
     /**
-     * Default initial capacity.
+     * 默认容量。
+     * elementData为空情况下,第一次扩容的时候会设置的容量
      */
     private static final int DEFAULT_CAPACITY = 10;
 
@@ -205,7 +205,7 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     private void ensureCapacityInternal(int minCapacity) {
-        if (elementData == EMPTY_ELEMENTDATA) {
+        if (elementData == EMPTY_ELEMENTDATA) { // elementData为空情况下,首次扩容,设置最小容量
             minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity);
         }
 
@@ -215,7 +215,7 @@ public class ArrayList<E> extends AbstractList<E>
     private void ensureExplicitCapacity(int minCapacity) {
         modCount++;
 
-        // overflow-conscious code
+        // overflow-conscious code // 条件成立,需扩容
         if (minCapacity - elementData.length > 0)
             grow(minCapacity);
     }
@@ -225,7 +225,7 @@ public class ArrayList<E> extends AbstractList<E>
      * Some VMs reserve some header words in an array.
      * Attempts to allocate larger arrays may result in
      * OutOfMemoryError: Requested array size exceeds VM limit
-     */
+     */ // 最大容量。超出JVM会限制  OutOfMemoryError: Requested array size exceeds VM limit 错误
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
     /**
@@ -237,11 +237,11 @@ public class ArrayList<E> extends AbstractList<E>
     private void grow(int minCapacity) {
         // overflow-conscious code
         int oldCapacity = elementData.length;
-        int newCapacity = oldCapacity + (oldCapacity >> 1);
+        int newCapacity = oldCapacity + (oldCapacity >> 1); // 1.5倍。(oldCapacity >> 1) 右移一位,表示取 oldCapacity 一半的值。
         if (newCapacity - minCapacity < 0)
             newCapacity = minCapacity;
-        if (newCapacity - MAX_ARRAY_SIZE > 0)
-            newCapacity = hugeCapacity(minCapacity);
+        if (newCapacity - MAX_ARRAY_SIZE > 0) // 大于JVM限制的最大值
+            newCapacity = hugeCapacity(minCapacity); // 极端情况
         // minCapacity is usually close to size, so this is a win:
         elementData = Arrays.copyOf(elementData, newCapacity);
     }
@@ -478,7 +478,7 @@ public class ArrayList<E> extends AbstractList<E>
 
         modCount++;
         E oldValue = elementData(index);
-
+        // 迁移的元素数量
         int numMoved = size - index - 1;
         if (numMoved > 0)
             System.arraycopy(elementData, index+1, elementData, index,
